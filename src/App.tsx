@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import CommentCard from "./components/CommentCard";
 import AddComent from "./components/AddComent";
+import axios from "axios";
 
 function App() {
   //eslint-disable-next-line
@@ -70,15 +71,29 @@ function App() {
   const [comments, setComments] = useState<Comment[] | undefined>(undefined);
 
   useEffect(() => {
-    fetch("http://localhost:4001/comments")
-      .then((result) => result.json())
-      .then((data) => setComments(data));
+    // fetch("http://localhost:4001/comments")
+    //   .then((result) => result.json())
+    //   .then((data) => setComments(data));
+
+    // using axios
+    const getComments = async () => {
+      const response = await axios.get("http://localhost:4001/comments");
+      setComments(response.data);
+    };
+    getComments();
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:4001/currentUser")
-      .then((data) => data.json())
-      .then((result) => setUserData(result));
+    // fetch("http://localhost:4001/currentUser")
+    //   .then((data) => data.json())
+    //   .then((result) => setUserData(result));
+
+    //using axios
+    const getUserData = async () => {
+      const response = await axios.get("http://localhost:4001/currentUser");
+      setUserData(response.data);
+    };
+    getUserData();
   }, []);
   return (
     // the below class w-screen enables that our app component take up the whole screen width
@@ -88,19 +103,28 @@ function App() {
       <main className="space-y-[16px] ">
         {comments?.map((comment: Comment) => (
           <>
-            <CommentCard key={comment.id} currentUser={userData.username} comment={comment} />
-            {comment?.replies?.length &&
+            {/* i passed in the username as current-user  */}
+            <CommentCard
+              key={comment.id}
+              currentUser={userData.username}
+              comment={comment}
+            />
+            {comment?.replies?.length > 0 &&
               comment.replies.map((reply) => (
-                <div className="border-l-2 border-gray-500 pl-[9px]">
-                  <CommentCard key={reply.id} currentUser={userData.username} comment={reply} />
+                <div className="border-l-2 border-gray-500 pl-[9px] lg:ml-[35px] lg:pl-[37px]">
+                  <CommentCard
+                    key={reply.id}
+                    currentUser={userData.username}
+                    comment={reply}
+                    parentObject={comment}
+                  />
                 </div>
               ))}
           </>
         ))}
-        <AddComent src={userData.image.png} />
+        <AddComent src={userData.image.png} action="SEND" />
       </main>
 
-      
       {/* <footer>
         Challenge by
         <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">
