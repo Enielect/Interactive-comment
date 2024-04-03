@@ -5,6 +5,7 @@ import ReplyEffect from "./ReplyEffect";
 import UserEdit from "./UserEdit";
 import AddComent from "./AddComent";
 import axios from "axios";
+import Modal from "./Modal";
 
 interface userData {
   image: { png: string; webp: string };
@@ -25,6 +26,9 @@ interface commentCardProps {
   };
   currentUser: string;
   parentObject: object;
+  handleIsCloseModal: () => void;
+  isModalOpen: boolean;
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 //proper way do define an array of strings
@@ -34,20 +38,37 @@ const CommentCard: React.FC<commentCardProps> = ({
   comment,
   currentUser,
   parentObject,
+  isModalOpen,
+  setIsModalOpen 
 }) => {
   const [likes, setLikes] = useState<number>(comment.score ?? 0);
   const [reply, setReply] = useState<boolean>(false);
   const [editComment, setEditComment] = useState<boolean>(false);
   const [editValue, setEditValue] = useState<string>(comment?.content);
 
+  // Generic Type (T): This function is generic, meaning it can work with arrays
+  //  of objects where the id property can be either a string or a number.
+  //   This provides flexibility.
+  // function findObjectIndex<T extends { id: string | number }>(data: T[], targetId: T["id"]): number {
+  //   for (let i = 0; i < data.length; i++) {
+  //     if (data[i].id === targetId) {
+  //       return i;
+  //     }
+  //   }
+  //   return -1; // Not found
+  // }
 
-  async function handleUpdate() {
-    const index = parentObject?.replies.findIndex(
+  function findUserIndexInReply(): number {
+    return parentObject?.replies.findIndex(
       (object: object) => object.id === comment.id
     );
+  }
+
+  async function handleUpdate() {
+    const index = findUserIndexInReply();
     try {
       const response =
-           parentObject &&
+        parentObject &&
         (await axios.put(`http://localhost:4001/comments/${parentObject?.id}`, {
           ...parentObject,
           replies: [
@@ -62,9 +83,42 @@ const CommentCard: React.FC<commentCardProps> = ({
     }
   }
 
+  const handleIsCloseModal = () => setIsModalOpen((c) => !c);
+
+
+  async function handleDeleteReply() {
+    const index = findUserIndexInReply();
+
+    try {
+      const response = parentObject && (await axios.put(
+        `http://localhost:4001/comments/${parentObject?.id}`,
+        {
+          ...parentObject,
+          replies: [
+            ...parentObject.replies.slice(0, index),
+            ...parentObject.replies.slice(index + 1),
+          ],
+        }
+      ));
+      console.log("data uploaded successfully", response);
+      handleIsCloseModal();
+    } catch (error) {
+      console.error("Error updating comment: ", error);
+    }
+  }
+
   return (
     <>
       <div className="bg-white p-[12px] space-y-7 rounded-[5px] font-sans">
+      {isModalOpen && (
+        <Modal handleDelete={handleDeleteReply} onClose={handleIsCloseModal} isOpen={isModalOpen}>
+          <h2 className="font-bold text-2xl mb-[10px]">Delete Comment</h2>
+          <div className="text-[14px] mb-[10px]">
+            Are you sure you want to delete this comment? This will remove the
+            comment and can't be undone `
+          </div>
+        </Modal>
+      )}
         {/* header of a comment card */}
         <div className="lg:flex lg:gap-[20px]">
           <div className="hidden lg:block">
@@ -96,7 +150,10 @@ const CommentCard: React.FC<commentCardProps> = ({
                 {comment.user.username !== currentUser ? (
                   <ReplyEffect setReply={setReply} />
                 ) : (
-                  <UserEdit setEditComment={setEditComment} />
+                  <UserEdit
+                    setEditComment={setEditComment}
+                    handleIsCloseModal={handleIsCloseModal}
+                  />
                 )}
               </div>
             </header>
@@ -149,7 +206,10 @@ const CommentCard: React.FC<commentCardProps> = ({
             {comment.user.username !== currentUser ? (
               <ReplyEffect setReply={setReply} />
             ) : (
-              <UserEdit setEditComment={setEditComment} />
+              <UserEdit
+                setEditComment={setEditComment}
+                handleIsCloseModal={handleIsCloseModal}
+              />
             )}
           </footer>
         </div>

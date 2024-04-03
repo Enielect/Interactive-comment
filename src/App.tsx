@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import CommentCard from "./components/CommentCard";
 import AddComent from "./components/AddComent";
 import axios from "axios";
-import Modal from "./components/Modal";
 
 function App() {
   //eslint-disable-next-line
@@ -57,6 +56,8 @@ function App() {
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
+
+
   const [comments, setComments] = useState<Comment[] | undefined>(undefined);
 
   useEffect(() => {
@@ -66,7 +67,7 @@ function App() {
       setComments(response.data);
     };
     getComments();
-  }, []);
+  }, [isModalOpen]);
 
   useEffect(() => {
     //using axios
@@ -75,24 +76,15 @@ function App() {
       setUserData(response.data);
     };
     getUserData();
-  }, []);
+  }, [isModalOpen]);
 
-  const handleIsCloseModal = () => setIsModalOpen((c) => !c);
 
   return (
     // the below class w-screen enables that our app component take up the whole screen width
     //without it only the max-width will function and about quater of our screen width
     //will be taken as we increase the widt dimensions
     <div className="bg-grayishBlue px-[15px] w-screen py-[20px] overflow-hidden">
-      {isModalOpen && (
-        <Modal onClose={handleIsCloseModal} isOpen={isModalOpen}>
-          <h2 className="font-bold text-2xl mb-[10px]">Delete Comment</h2>
-          <div className="text-[14px] mb-[10px]">
-            Are you sure you want to delete this comment? This will remove the
-            comment and can't be undone `
-          </div>
-        </Modal>
-      )}
+      
       <main className="space-y-[16px] ">
         {comments?.map((comment: Comment) => (
           <>
@@ -101,7 +93,8 @@ function App() {
               key={comment.id}
               currentUser={userData.username}
               comment={comment}
-              handleIsCloseModal={handleIsCloseModal}
+              isModalOpen={isModalOpen}
+              setIsModalOpen={setIsModalOpen}
             />
             {comment?.replies?.length > 0 &&
               comment.replies.map((reply) => (
@@ -111,7 +104,8 @@ function App() {
                     currentUser={userData.username}
                     comment={reply}
                     parentObject={comment}
-                    handleIsCloseModal={handleIsCloseModal}
+                    isModalOpen={isModalOpen}
+                    setIsModalOpen={setIsModalOpen}
                   />
                 </div>
               ))}
