@@ -49,6 +49,34 @@
           }
         }
       ]
+    },
+    {
+      "id": "17c8",
+      "content": "eight time attempting to make my firt real comment in this app hmm.. please work",
+      "createdAt": "2024-04-06T09:22:21.717Z",
+      "score": 0,
+      "user": {
+        "image": {
+          "png": "./images/avatars/image-juliusomo.png",
+          "webp": "./images/avatars/image-juliusomo.webp"
+        },
+        "username": "juliusomo"
+      },
+      "replies": []
+    },
+    {
+      "id": "d848",
+      "content": "what the actual fuck",
+      "createdAt": "2024-04-06T10:00:44.285Z",
+      "score": 0,
+      "user": {
+        "image": {
+          "png": "./images/avatars/image-juliusomo.png",
+          "webp": "./images/avatars/image-juliusomo.webp"
+        },
+        "username": "juliusomo"
+      },
+      "replies": []
     }
   ]
 }
