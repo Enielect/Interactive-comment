@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 // import { HiArrowUturnLeft, HiOutlineTrash, HiPencil } from "react-icons/hi2";
 import LikesCounter from "./LikesCounter";
 import ReplyEffect from "./ReplyEffect";
@@ -15,18 +15,25 @@ interface userData {
 interface commentCardProps {
   // Add your component props here
   comment: {
-    id?: number;
+    id: number | string;
     content: string;
     createdAt: string;
     score: number;
     user: userData;
-    username: string;
-    replies?: object[];
-    replyingTo: string;
+    //removing the queston mark from below wasn't the easies of things
+    replies: {
+      id: number;
+      content: string;
+      createdAt: string;
+      score: number;
+      replyingTo: string;
+      user: userData;
+    }[];
+    replyingTo?: string;
   };
   currentUser: string;
-  parentObject: object;
-  handleIsCloseModal: () => void;
+  //below is something new: extracts the interface from the comment object of the commentCardProps interface
+  parentObject: commentCardProps["comment"];
   isModalOpen: boolean;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -39,7 +46,7 @@ const CommentCard: React.FC<commentCardProps> = ({
   currentUser,
   parentObject,
   isModalOpen,
-  setIsModalOpen 
+  setIsModalOpen,
 }) => {
   const [likes, setLikes] = useState<number>(comment.score ?? 0);
   const [reply, setReply] = useState<boolean>(false);
@@ -59,24 +66,34 @@ const CommentCard: React.FC<commentCardProps> = ({
   // }
 
   function findUserIndexInReply(): number {
-    return parentObject?.replies.findIndex(
-      (object: object) => object.id === comment.id
-    );
+    return parentObject.replies.findIndex((object) => object.id === comment.id);
   }
 
   async function handleUpdate() {
-    const index = findUserIndexInReply();
     try {
-      const response =
-        parentObject &&
-        (await axios.put(`http://localhost:4001/comments/${parentObject?.id}`, {
-          ...parentObject,
-          replies: [
-            ...parentObject.replies.slice(0, index),
-            { ...parentObject?.replies[index], content: editValue },
-            ...parentObject.replies.slice(index + 1),
-          ],
-        }));
+      let response;
+      if (parentObject) {
+        const index = findUserIndexInReply();
+        response = await axios.put(
+          `http://localhost:4001/comments/${parentObject?.id}`,
+          {
+            ...parentObject,
+            replies: [
+              ...parentObject.replies.slice(0, index),
+              { ...parentObject?.replies[index], content: editValue },
+              ...parentObject.replies.slice(index + 1),
+            ],
+          }
+        );
+      } else {
+        response = await axios.put(
+          `http://localhost:4001/comments/${comment.id}`,
+          {
+            ...comment,
+            content: editValue,
+          }
+        );
+      }
       console.log("data uploaded successfully:", response);
     } catch (error) {
       console.error("Error updating comment:", error);
@@ -85,21 +102,18 @@ const CommentCard: React.FC<commentCardProps> = ({
 
   const handleIsCloseModal = () => setIsModalOpen((c) => !c);
 
-
   async function handleDeleteReply() {
-    const index = findUserIndexInReply();
-
     try {
-      const response = parentObject && (await axios.put(
-        `http://localhost:4001/comments/${parentObject?.id}`,
-        {
+      const index = findUserIndexInReply();
+      const response =
+        parentObject &&
+        (await axios.put(`http://localhost:4001/comments/${parentObject?.id}`, {
           ...parentObject,
           replies: [
             ...parentObject.replies.slice(0, index),
             ...parentObject.replies.slice(index + 1),
           ],
-        }
-      ));
+        }));
       console.log("data uploaded successfully", response);
       handleIsCloseModal();
     } catch (error) {
@@ -110,15 +124,19 @@ const CommentCard: React.FC<commentCardProps> = ({
   return (
     <>
       <div className="bg-white p-[12px] space-y-7 rounded-[5px] font-sans">
-      {isModalOpen && (
-        <Modal handleDelete={handleDeleteReply} onClose={handleIsCloseModal} isOpen={isModalOpen}>
-          <h2 className="font-bold text-2xl mb-[10px]">Delete Comment</h2>
-          <div className="text-[14px] mb-[10px]">
-            Are you sure you want to delete this comment? This will remove the
-            comment and can't be undone `
-          </div>
-        </Modal>
-      )}
+        {isModalOpen && (
+          <Modal
+            handleDelete={handleDeleteReply}
+            onClose={handleIsCloseModal}
+            isOpen={isModalOpen}
+          >
+            <h2 className="font-bold text-2xl mb-[10px]">Delete Comment</h2>
+            <div className="text-[14px] mb-[10px]">
+              Are you sure you want to delete this comment? This will remove the
+              comment and can't be undone `
+            </div>
+          </Modal>
+        )}
         {/* header of a comment card */}
         <div className="lg:flex lg:gap-[20px]">
           <div className="hidden lg:block">

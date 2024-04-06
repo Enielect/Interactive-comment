@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import CommentCard from "./components/CommentCard";
 import AddComent from "./components/AddComent";
 import axios from "axios";
@@ -24,7 +24,14 @@ function App() {
     score: number;
     user: userData;
     username: string;
-    replies?: object[];
+    replies: {
+      id: number;
+      content: string;
+      createdAt: string;
+      score: number;
+      replyingTo: string;
+      user: userData;
+    }[];
     replyingTo?: string;
   }
   /**
@@ -56,8 +63,6 @@ function App() {
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-
-
   const [comments, setComments] = useState<Comment[] | undefined>(undefined);
 
   useEffect(() => {
@@ -78,13 +83,11 @@ function App() {
     getUserData();
   }, [isModalOpen]);
 
-
   return (
     // the below class w-screen enables that our app component take up the whole screen width
     //without it only the max-width will function and about quater of our screen width
     //will be taken as we increase the widt dimensions
-    <div className="bg-grayishBlue px-[15px] w-screen py-[20px] overflow-hidden">
-      
+    <div className="bg-grayishBlue overflow-scroll px-[15px] w-screen py-[20px] h-screen">
       <main className="space-y-[16px] ">
         {comments?.map((comment: Comment) => (
           <>
@@ -96,7 +99,7 @@ function App() {
               isModalOpen={isModalOpen}
               setIsModalOpen={setIsModalOpen}
             />
-            {comment?.replies?.length > 0 &&
+            {comment.replies.length > 0 &&
               comment.replies.map((reply) => (
                 <div className="border-l-2 border-gray-500 pl-[9px] lg:ml-[35px] lg:pl-[37px]">
                   <CommentCard
@@ -111,7 +114,12 @@ function App() {
               ))}
           </>
         ))}
-        <AddComent src={userData.image.png} action="SEND" />
+        <AddComent
+          action="SEND"
+          src={userData.image.png}
+          comments={comments}
+          currentUser={userData}
+        />
       </main>
 
       {/* <footer>
