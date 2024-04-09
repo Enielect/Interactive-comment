@@ -33,7 +33,7 @@ const initialState = {
 
 const CommentContext = createContext<{
   data: State;
-  dispatch: React.Dispatch<any>;
+  dispatch: React.Dispatch<MyActionTypes>;
 }>({ data: initialState, dispatch: () => null });
 
 enum actionType {

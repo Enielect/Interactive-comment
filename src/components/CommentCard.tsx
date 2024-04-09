@@ -1,41 +1,22 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { Comment } from "../interfaces/commentInterface";
 // import { HiArrowUturnLeft, HiOutlineTrash, HiPencil } from "react-icons/hi2";
 import LikesCounter from "./LikesCounter";
 import ReplyEffect from "./ReplyEffect";
 import UserEdit from "./UserEdit";
 import AddComent from "./AddComent";
-import axios from "axios";
 import Modal from "./Modal";
+import { CommentContext } from "../contexts/CommentData";
+import { useUpdate } from "../hooks/useUpadat";
 
-interface userData {
-  image: { png: string; webp: string };
-  username: string;
-}
 
+
+//currentUser = currentUser.username
 interface commentCardProps {
-  // Add your component props here
-  comment: {
-    id: number | string;
-    content: string;
-    createdAt: string;
-    score: number;
-    user: userData;
-    //removing the queston mark from below wasn't the easies of things
-    replies: {
-      id: number;
-      content: string;
-      createdAt: string;
-      score: number;
-      replyingTo: string;
-      user: userData;
-    }[];
-    replyingTo?: string;
-  };
-  currentUser: string;
+  comment: Comment;
   //below is something new: extracts the interface from the comment object of the commentCardProps interface
-  parentObject: commentCardProps["comment"];
-  isModalOpen: boolean;
-  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  parentObject?: commentCardProps["comment"];
+  // setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 //proper way do define an array of strings
@@ -43,83 +24,27 @@ interface commentCardProps {
 
 const CommentCard: React.FC<commentCardProps> = ({
   comment,
-  currentUser,
   parentObject,
-  isModalOpen,
-  setIsModalOpen,
 }) => {
+
+  const {data, dispatch} = useContext(CommentContext);
+
+
+  const {comments, userData, isModalOpen} = data;
+  const currentUser = userData.username;
+
   const [likes, setLikes] = useState<number>(comment.score ?? 0);
   const [reply, setReply] = useState<boolean>(false);
   const [editComment, setEditComment] = useState<boolean>(false);
   const [editValue, setEditValue] = useState<string>(comment?.content);
 
-  // Generic Type (T): This function is generic, meaning it can work with arrays
-  //  of objects where the id property can be either a string or a number.
-  //   This provides flexibility.
-  // function findObjectIndex<T extends { id: string | number }>(data: T[], targetId: T["id"]): number {
-  //   for (let i = 0; i < data.length; i++) {
-  //     if (data[i].id === targetId) {
-  //       return i;
-  //     }
-  //   }
-  //   return -1; // Not found
-  // }
+ 
 
-  function findUserIndexInReply(): number {
-    return parentObject.replies.findIndex((object) => object.id === comment.id);
-  }
+  const {handleUpdate, handleDeleteReply} = useUpdate(parentObject, comment, editValue);
 
-  async function handleUpdate() {
-    try {
-      let response;
-      if (parentObject) {
-        const index = findUserIndexInReply();
-        response = await axios.put(
-          `http://localhost:4001/comments/${parentObject?.id}`,
-          {
-            ...parentObject,
-            replies: [
-              ...parentObject.replies.slice(0, index),
-              { ...parentObject?.replies[index], content: editValue },
-              ...parentObject.replies.slice(index + 1),
-            ],
-          }
-        );
-      } else {
-        response = await axios.put(
-          `http://localhost:4001/comments/${comment.id}`,
-          {
-            ...comment,
-            content: editValue,
-          }
-        );
-      }
-      console.log("data uploaded successfully:", response);
-    } catch (error) {
-      console.error("Error updating comment:", error);
-    }
-  }
+  const handleIsCloseModal = () => dispatch({type: "CHANGE_MODAL_STATE"});
 
-  const handleIsCloseModal = () => setIsModalOpen((c) => !c);
-
-  async function handleDeleteReply() {
-    try {
-      const index = findUserIndexInReply();
-      const response =
-        parentObject &&
-        (await axios.put(`http://localhost:4001/comments/${parentObject?.id}`, {
-          ...parentObject,
-          replies: [
-            ...parentObject.replies.slice(0, index),
-            ...parentObject.replies.slice(index + 1),
-          ],
-        }));
-      console.log("data uploaded successfully", response);
-      handleIsCloseModal();
-    } catch (error) {
-      console.error("Error updating comment: ", error);
-    }
-  }
+  
 
   return (
     <>
@@ -202,17 +127,11 @@ const CommentCard: React.FC<commentCardProps> = ({
                 </div>
               </div>
             ) : (
-              // <textarea
-              //   placeholder={`@${comment.replyingTo} ${comment.content}`}
-              // ></textarea>
               <div>
                 {comment.replyingTo && (
                   <span className="text-purple-700">@{comment.replyingTo}</span>
                 )}{" "}
                 {comment.content}
-                {/* Impressive! Though it seems the drag feature could be improved. But
-        overall it looks incredible. You've nailed the design and the
-        responsiveness at various breakpoints works very well */}
               </div>
             )}
           </div>
@@ -238,6 +157,10 @@ const CommentCard: React.FC<commentCardProps> = ({
         <div className="mt-[`12px]">
           <AddComent
             action="REPLY"
+            parentObject={parentObject}
+            currentUser={currentUser}
+            comment={comment}
+            comments={comments}
             src={`./images/avatars/image-${currentUser}.png`}
           />
         </div>
