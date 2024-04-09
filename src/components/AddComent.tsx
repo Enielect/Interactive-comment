@@ -115,13 +115,7 @@ const AddComent: React.FC<AddComentProps> = ({
                 createdAt: new Date().toISOString(),
                 score: 0,
                 replyingTo: comment.user.username,
-                user: {
-                  image: {
-                    png: `./images/avatars/image-${currentUser}.png`,
-                    webp: `./images/avatars/image-${currentUser}.webp`,
-                  },
-                  username: `${currentUser}`,
-                },
+                user: currentUser,
               },
             ],
           };
