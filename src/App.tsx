@@ -13,32 +13,8 @@ function App() {
 
   // const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { data } = useContext(CommentContext);
-  const { comments, userData, isModalOpen } = data;
+  const { comments } = data;
 
-  // const [userData, setUserData] = useState<UserInfo>({
-  //   image: { png: "", webp: "" },
-  //   username: "",
-  // });
-
-  // const [comments, setComments] = useState<Comment[] | undefined>(undefined);
-
-  // useEffect(() => {
-  //   // using axios
-  //   const getComments = async () => {
-  //     const response = await axios.get("http://localhost:4001/comments");
-  //     setComments(response.data);
-  //   };
-  //   getComments();
-  // }, [isModalOpen]);
-
-  // useEffect(() => {
-  //   //using axios
-  //   const getUserData = async () => {
-  //     const response = await axios.get("http://localhost:4001/currentUser");
-  //     setUserData(response.data);
-  //   };
-  //   getUserData();
-  // }, [isModalOpen]);
 
   return (
     // the below class w-screen enables that our app component take up the whole screen width
