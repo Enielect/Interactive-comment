@@ -4,9 +4,9 @@ import { createContext, useEffect, useReducer } from "react";
 import { Comment } from "../interfaces/commentInterface";
 
 type MyActionTypes =
-  | { type: actionType.ADD_COMMENT; payload: Comment[] } // Payload for adding a TODO
-  | { type: actionType.ADD_USER_DATA; payload: Comment["user"] } // Payload for removing a TODO
-  | { type: actionType.CHANGE_MODAL_STATE };
+  | { type: "ADD_COMMENT"; payload: Comment[] } // Payload for adding a TODO
+  | { type: "ADD_USER_DATA"; payload: Comment["user"] } // Payload for removing a TODO
+  | { type: "CHANGE_MODAL_STATE" };
 
 //not sure of the below
 
@@ -34,15 +34,14 @@ const initialState = {
 const CommentContext = createContext<{
   data: State;
   dispatch: React.Dispatch<MyActionTypes>;
-}>({ data: initialState, dispatch: () => null });
+  getComments: () => void;
+}>({ data: initialState, dispatch: () => null, getComments: () => null });
 
 enum actionType {
   ADD_COMMENT = "ADD_COMMENT",
   ADD_USER_DATA = "ADD_USER_DATA",
   CHANGE_MODAL_STATE = "CHANGE_MODAL_STATE",
 }
-
-
 
 const CommentProvider: React.FC<CommentProviderProp> = ({ children }) => {
   function reducer(state: State, action: MyActionTypes): State {
@@ -67,14 +66,14 @@ const CommentProvider: React.FC<CommentProviderProp> = ({ children }) => {
   const [data, dispatch] = useReducer(reducer, initialState);
 
   // const [comments, setComments] = useState<Comment[] | undefined>(undefined);
+  const getComments = async () => {
+    const response = await axios.get("http://localhost:4001/comments");
+    dispatch({ type: actionType.ADD_COMMENT, payload: response.data });
+    // setComments(response.data);
+  };
 
   useEffect(() => {
     // using axios
-    const getComments = async () => {
-      const response = await axios.get("http://localhost:4001/comments");
-      dispatch({ type: actionType.ADD_COMMENT, payload: response.data });
-      // setComments(response.data);
-    };
     getComments();
   }, [data.isModalOpen]);
 
@@ -89,14 +88,14 @@ const CommentProvider: React.FC<CommentProviderProp> = ({ children }) => {
   }, [data.isModalOpen]);
 
   return (
-    <CommentContext.Provider value={{ data, dispatch }}>
+    <CommentContext.Provider value={{ data, dispatch, getComments }}>
       {children}
     </CommentContext.Provider>
   );
 };
 
 //i had issues implementing the below in typescript
-//i ommited this due to the fact that in whatever case we are safe due to 
+//i ommited this due to the fact that in whatever case we are safe due to
 //the fact that the Context provider is wrapped arround the whole application
 
 // function UseCommentsData() {

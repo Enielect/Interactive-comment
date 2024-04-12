@@ -22,8 +22,36 @@
       "replies": [
         {
           "id": 6,
-          "content": "yo!! sup, care for dinner tonight?",
+          "content": "yo!! sup, care for dinner tonight? my lady ",
           "createdAt": "2024-04-09T08:54:40.933Z",
+          "score": 0,
+          "replyingTo": "amyrobson",
+          "user": {
+            "image": {
+              "png": "./images/avatars/image-juliusomo.png",
+              "webp": "./images/avatars/image-juliusomo.webp"
+            },
+            "username": "juliusomo"
+          }
+        },
+        {
+          "id": null,
+          "content": "lady girk and see",
+          "createdAt": "2024-04-10T20:19:27.847Z",
+          "score": 0,
+          "replyingTo": "amyrobson",
+          "user": {
+            "image": {
+              "png": "./images/avatars/image-juliusomo.png",
+              "webp": "./images/avatars/image-juliusomo.webp"
+            },
+            "username": "juliusomo"
+          }
+        },
+        {
+          "id": 7,
+          "content": "baby girl",
+          "createdAt": "2024-04-11T07:19:01.896Z",
           "score": 0,
           "replyingTo": "amyrobson",
           "user": {
@@ -94,9 +122,9 @@
       ]
     },
     {
-      "id": "d501",
-      "content": "please comment i beg you in the name of Jesus, please work, thanks.",
-      "createdAt": "2024-04-10T13:24:36.566Z",
+      "id": "2047",
+      "content": "omo...",
+      "createdAt": "2024-04-11T07:23:44.283Z",
       "score": 0,
       "user": {
         "image": {

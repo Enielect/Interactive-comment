@@ -5,7 +5,7 @@ export default {
     extend: {
       colors: {
         grayishBlue: "hsl(239, 57%, 85%)",
-        modalBackground: "rgba(0,0,0,0.5)"
+        modalBackground: "rgba(0,0,0,0.1)"
       },
     },
   },

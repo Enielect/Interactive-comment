@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Comment } from "../interfaces/commentInterface";
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { CommentContext } from "../contexts/CommentData";
 
 function useUpdate(
@@ -8,13 +8,14 @@ function useUpdate(
   comment: Comment,
   updatedValue: string
 ) {
-
-    const {dispatch} = useContext(CommentContext);
+  const { dispatch, getComments } = useContext(CommentContext);
   function findUserIndexInReply(): number {
     return parentObject.replies.findIndex((object) => object.id === comment.id);
   }
 
-  async function handleUpdate() {
+  async function handleUpdate(
+    setEditComment: React.Dispatch<React.SetStateAction<boolean>>
+  ) {
     try {
       let response;
       if (parentObject) {
@@ -30,6 +31,8 @@ function useUpdate(
             ],
           }
         );
+        getComments();
+        setEditComment((c) => !c);
       } else {
         response = await axios.put(
           `http://localhost:4001/comments/${comment.id}`,
@@ -38,6 +41,8 @@ function useUpdate(
             content: updatedValue,
           }
         );
+        getComments();
+        setEditComment((c: boolean) => !c);
       }
       console.log("data uploaded successfully:", response);
     } catch (error) {
@@ -45,7 +50,7 @@ function useUpdate(
     }
   }
 
-  const handleIsCloseModal = () => dispatch({type: "CHANGE_MODAL_STATE"})
+  const handleIsCloseModal = () => dispatch({ type: "CHANGE_MODAL_STATE" });
 
   async function handleDeleteReply() {
     try {

@@ -1,6 +1,5 @@
 import React, { useContext, useState } from "react";
 import { Comment } from "../interfaces/commentInterface";
-// import { HiArrowUturnLeft, HiOutlineTrash, HiPencil } from "react-icons/hi2";
 import LikesCounter from "./LikesCounter";
 import ReplyEffect from "./ReplyEffect";
 import UserEdit from "./UserEdit";
@@ -8,8 +7,6 @@ import AddComent from "./AddComent";
 import Modal from "./Modal";
 import { CommentContext } from "../contexts/CommentData";
 import { useUpdate } from "../hooks/useUpadat";
-
-
 
 //currentUser = currentUser.username
 interface commentCardProps {
@@ -22,15 +19,10 @@ interface commentCardProps {
 //proper way do define an array of strings
 // const myStringArray: string[] = new Array<string>(); // Array of strings
 
-const CommentCard: React.FC<commentCardProps> = ({
-  comment,
-  parentObject,
-}) => {
+const CommentCard: React.FC<commentCardProps> = ({ comment, parentObject }) => {
+  const { data, dispatch } = useContext(CommentContext);
 
-  const {data, dispatch} = useContext(CommentContext);
-
-
-  const {comments, userData, isModalOpen} = data;
+  const { userData, isModalOpen } = data;
   const currentUser = userData.username;
 
   const [likes, setLikes] = useState<number>(comment.score ?? 0);
@@ -38,13 +30,13 @@ const CommentCard: React.FC<commentCardProps> = ({
   const [editComment, setEditComment] = useState<boolean>(false);
   const [editValue, setEditValue] = useState<string>(comment?.content);
 
- 
+  const { handleUpdate, handleDeleteReply } = useUpdate(
+    parentObject,
+    comment,
+    editValue
+  );
 
-  const {handleUpdate, handleDeleteReply} = useUpdate(parentObject, comment, editValue);
-
-  const handleIsCloseModal = () => dispatch({type: "CHANGE_MODAL_STATE"});
-
-  
+  const handleIsCloseModal = () => dispatch({ type: "CHANGE_MODAL_STATE" });
 
   return (
     <>
@@ -102,12 +94,6 @@ const CommentCard: React.FC<commentCardProps> = ({
             </header>
             {editComment ? (
               <div className="mt-[13px] relative">
-                {/* <AddComent
-                  action="UPDATE"
-                  src={`./images/avatars/image-${currentUser}.png`}
-                  placeholder={`@${comment.replyingTo} ${comment.content}`}
-                /> */}
-
                 <textarea
                   name=""
                   className="border border-black rounded-sm p-[5px]"
@@ -119,7 +105,7 @@ const CommentCard: React.FC<commentCardProps> = ({
                 ></textarea>
                 <div className="flex justify-end">
                   <button
-                    onClick={handleUpdate}
+                    onClick={() => handleUpdate(setEditComment)}
                     className="bg-blue-600 text-white rounded-[5px] block mt-[13px] font-bold p-[10px]"
                   >
                     UPDATE
@@ -154,14 +140,13 @@ const CommentCard: React.FC<commentCardProps> = ({
       {/* configure the style of the url link for the current-user image */}
       {/* the below displays the input filed when the reply button is clicked */}
       {reply && (
-        <div className="mt-[`12px]">
+        <div className="mt-[12px]">
           <AddComent
             action="REPLY"
             parentObject={parentObject}
-            currentUser={currentUser}
             comment={comment}
-            comments={comments}
-            src={`./images/avatars/image-${currentUser}.png`}
+            setReply={setReply}
+            // src={`./images/avatars/image-${currentUser}.png`}
           />
         </div>
       )}

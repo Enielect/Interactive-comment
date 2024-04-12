@@ -9,9 +9,6 @@ function App() {
 
   // we also had to define interfaces explicitly for the argument of the usestate
 
-  // const [comments, setComments] = useState<string[]>([]);
-
-  // const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { data } = useContext(CommentContext);
   const { comments } = data;
 
