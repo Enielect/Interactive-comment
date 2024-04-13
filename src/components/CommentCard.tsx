@@ -7,6 +7,7 @@ import AddComent from "./AddComent";
 import Modal from "./Modal";
 import { CommentContext } from "../contexts/CommentData";
 import { useUpdate } from "../hooks/useUpadat";
+import useLikesUpdate from "../hooks/useLikesUpdate";
 
 //currentUser = currentUser.username
 interface commentCardProps {
@@ -36,6 +37,8 @@ const CommentCard: React.FC<commentCardProps> = ({ comment, parentObject }) => {
     editValue
   );
 
+  const { updateLikes } = useLikesUpdate(parentObject, comment, likes);
+
   const handleIsCloseModal = () => dispatch({ type: "CHANGE_MODAL_STATE" });
 
   return (
@@ -57,10 +60,15 @@ const CommentCard: React.FC<commentCardProps> = ({ comment, parentObject }) => {
         {/* header of a comment card */}
         <div className="lg:flex lg:gap-[20px]">
           <div className="hidden lg:block">
-            <LikesCounter likes={likes} setLikes={setLikes} large={true} />
+            <LikesCounter
+              likes={likes}
+              updateLikes={updateLikes}
+              setLikes={setLikes}
+              large={true}
+            />
           </div>
-          <div className="lg:space-y-[15px]">
-            <header className="flex flex-row gap-[15px] items-center lg:justify-between">
+          <div className="lg:space-y-[15px] w-full">
+            <header className="flex flex-row gap-[15px] w-full items-center lg:justify-between">
               <div className="flex gap-[15px]">
                 <img
                   src={comment.user.image.png}
@@ -123,7 +131,7 @@ const CommentCard: React.FC<commentCardProps> = ({ comment, parentObject }) => {
           </div>
           <footer className="flex justify-between lg:hidden">
             {/* likes counter */}
-            <LikesCounter large={false} likes={likes} setLikes={setLikes} />
+            <LikesCounter updateLikes={updateLikes} large={false} likes={likes} setLikes={setLikes} />
             {/* end of likes counter */}
 
             {comment.user.username !== currentUser ? (
