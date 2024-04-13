@@ -32,7 +32,7 @@ const AddComent: React.FC<AddComentProps> = ({
 
   //add a prop that specifies the function of the addcomment component
 
-  const { handleSubmitComment, setUserComment } = useSubmitComment(
+  const { handleSubmitComment, setUserComment, userComment } = useSubmitComment(
     parentObject,
     comment,
     action
@@ -41,11 +41,12 @@ const AddComent: React.FC<AddComentProps> = ({
   // console.log(userComment);
 
   return (
-    <div className="bg-white px-[24px] rounded-xl lg:flex lg:items-start lg:py-[15px] gap-[10px]">
+    <div className="bg-white px-[24px] rounded-xl lg:flex lg:items-center lg:py-[15px] gap-[10px]">
       <img src={src} className="hidden lg:block lg:w-[40px] h-[40px]" alt="" />
       <input
         type="text"
         onChange={(e) => setUserComment(e.target.value)}
+        value={userComment}
         placeholder={action === "SEND" ? "Add a comment" : "Add a reply"}
         className="border-black h-[80px] w-full px-[10px] my-[20px] rounded-[9px] border"
       />
