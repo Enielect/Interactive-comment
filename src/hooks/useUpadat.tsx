@@ -4,13 +4,13 @@ import React, { useContext } from "react";
 import { CommentContext } from "../contexts/CommentData";
 
 function useUpdate(
-  parentObject: Comment,
+  parentObject: Comment | undefined,
   comment: Comment,
   updatedValue: string
 ) {
   const { dispatch, getComments } = useContext(CommentContext);
-  function findUserIndexInReply(): number {
-    return parentObject.replies.findIndex((object) => object.id === comment.id);
+  function findUserIndexInReply(parent: Comment): number {
+    return parent.replies.findIndex((object) => object.id === comment.id);
   }
 
   async function handleUpdate(
@@ -19,7 +19,7 @@ function useUpdate(
     try {
       let response;
       if (parentObject) {
-        const index = findUserIndexInReply();
+        const index = findUserIndexInReply(parentObject);
         response = await axios.put(
           `http://localhost:4001/comments/${parentObject?.id}`,
           {
@@ -55,7 +55,7 @@ function useUpdate(
   async function handleDeleteReply() {
     try {
       if (parentObject) {
-        const index = findUserIndexInReply();
+        const index = findUserIndexInReply(parentObject);
         const response =
           parentObject &&
           (await axios.put(

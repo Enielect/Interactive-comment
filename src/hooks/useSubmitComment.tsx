@@ -131,7 +131,7 @@ function useSubmitComment(
     //below should be intent not action trying to avoid error warning
   }
 
-  return { handleSubmitComment, setUserComment };
+  return { handleSubmitComment, setUserComment, userComment };
 }
 
 export default useSubmitComment;

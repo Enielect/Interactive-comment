@@ -13,7 +13,7 @@ import useLikesUpdate from "../hooks/useLikesUpdate";
 interface commentCardProps {
   comment: Comment;
   //below is something new: extracts the interface from the comment object of the commentCardProps interface
-  parentObject?: commentCardProps["comment"];
+  parentObject: commentCardProps["comment"] | undefined;
   // setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 

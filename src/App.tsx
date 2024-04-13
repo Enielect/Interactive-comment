@@ -22,7 +22,8 @@ function App() {
         {comments?.map((comment: Comment) => (
           <>
             {/* i passed in the username as current-user  */}
-            <CommentCard key={comment.id} comment={comment} />
+            {/* //is it okey to pass undefined as prop values??? */}
+            <CommentCard key={comment.id} comment={comment} parentObject={undefined} />
             {comment.replies.length > 0 &&
               comment.replies.map((reply) => (
                 <div className="border-l-2 border-gray-500 pl-[9px] lg:ml-[35px] lg:pl-[37px]">
