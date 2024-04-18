@@ -47,8 +47,50 @@
             },
             "username": "ramsesmiron"
           }
+        },
+        {
+          "id": 4,
+          "content": "love it",
+          "createdAt": "2024-04-14T23:05:20.654Z",
+          "score": 0,
+          "replyingTo": "maxblagun",
+          "user": {
+            "image": {
+              "png": "./images/avatars/image-juliusomo.png",
+              "webp": "./images/avatars/image-juliusomo.webp"
+            },
+            "username": "juliusomo"
+          }
         }
       ]
+    },
+    {
+      "id": "c64b",
+      "content": "lovely",
+      "createdAt": "2024-04-16T08:51:07.394Z",
+      "score": 0,
+      "user": {
+        "image": {
+          "png": "./images/avatars/image-juliusomo.png",
+          "webp": "./images/avatars/image-juliusomo.webp"
+        },
+        "username": "juliusomo"
+      },
+      "replies": []
+    },
+    {
+      "id": "cdea",
+      "content": "this is the first time i am trying the date formatter",
+      "createdAt": "16th April, 2024;18:16:",
+      "score": 0,
+      "user": {
+        "image": {
+          "png": "./images/avatars/image-juliusomo.png",
+          "webp": "./images/avatars/image-juliusomo.webp"
+        },
+        "username": "juliusomo"
+      },
+      "replies": []
     }
   ]
 }
