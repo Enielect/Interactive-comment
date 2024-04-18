@@ -24,7 +24,7 @@ export const getDate = (date: Date): string => {
   n_date += mth[td.getMonth()] + ", ";
   n_date += td.getFullYear() + ";";
   n_date += td.getHours() + ":";
-  n_date += td.getMinutes() + ":";
+  n_date += td.getMinutes() + "";
 
   return n_date;
 }
