@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getDate } from "../utils/getDate";
 import { useContext, useState } from "react";
 import { CommentContext } from "../contexts/CommentData";
 import { Comment } from "../interfaces/commentInterface";
@@ -46,7 +47,7 @@ function useSubmitComment(
         // const highestId = String(highestId + 1);
         const newCommentData = {
           content: userComment,
-          createdAt: new Date().toISOString(),
+          createdAt: getDate(new Date()),
           score: 0,
           user: currentUser,
           replies: [],
